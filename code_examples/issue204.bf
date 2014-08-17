@@ -40,11 +40,11 @@ DataSet testData = Simulate (T, eqf, characters, 1, 0);
 
 for(site=0; site<100; site+=1){
   siteScale := siteRates[site__];
-  DataSet sim = Simulate (T, eqf, characters, 1, 0);
 
   if (site == 0) {
     DataSet testData = Simulate (T, eqf, characters, 1, 0);
   } else {
+    DataSet sim = Simulate (T, eqf, characters, 1, 0);
     DataSet testData = Concatenate(testData, sim);
   }
 }
