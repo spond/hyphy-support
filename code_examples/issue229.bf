@@ -23,8 +23,7 @@ codon_data_info = utility.promptForGeneticCodeAndAlignment ("codon_data", "codon
 
 LoadFunctionLibrary ("CodonTools.def");
 
-
-tree 	  = utility.loadAnnotatedTopology ();
+tree 	  = utility.loadAnnotatedTopology (1);
 
 DataSetFilter dnds_estimator.codon_data = CreateFilter (codon_filter, 3, "", "", codon_data_info["stop"]);
 
@@ -52,4 +51,20 @@ dnds_estimator.lengths.nonsyn = +dnds_estimator.lengths["NonSyn"] * nonsyn_site_
 
 fprintf (stdout, "\ndS = ", dnds_estimator.lengths.syn, 
                  "\ndN = ", dnds_estimator.lengths.nonsyn,
-                 "\n\n");
+                 "\n");
+                 
+tt = ReturnVectorsOfCodonLengths (ComputeScalingStencils(0), "dnds.tree");
+
+keys = {{"Syn","NonSyn"}};
+
+flatTree = dnds.tree ^ 0;
+
+LoadFunctionLibrary ("TreeTools");
+
+for (k = 0; k < Columns (keys); k+=1) {
+    distanceAnnotator = {};
+    for (b = 0; b < Abs (flatTree) - 1; b+=1) {
+        distanceAnnotator [ (flatTree[b])["Name"] ] = (tt[keys[k]])[b] * dnds_estimator.codon_data.sites * 3;
+    }   
+    fprintf (stdout, "\n", keys[k], "\n", PostOrderAVL2StringDistances (flatTree, distanceAnnotator), "\n");
+}
